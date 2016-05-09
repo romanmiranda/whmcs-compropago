@@ -26,7 +26,7 @@ if (!defined("WHMCS")) {
 
 use Compropago\Sdk\Client;
 use Compropago\Sdk\Service;
-
+use Compropago\Sdk\Controllers\Views;
 
 /**
  * Funcion que despluega los campos de configuracion para el modulo de ComproPago
@@ -34,7 +34,7 @@ use Compropago\Sdk\Service;
  * @return array
  */
 function compropago_config()
-{
+{;
     return array(
         "FriendlyName" => array(
             "Type"         => "System",
@@ -150,40 +150,52 @@ function compropago_link($params)
     $code = null;
 
     $config = array(
-        "publickey" => $params['publickey'],
-        "privatekey" => $params['privatekey'],
-        "live" => $params['mode']
+        "publickey"     => $params['publickey'],
+        "privatekey"    => $params['privatekey'],
+        "live"          => $params['mode']
     );
 
     try{
         $client = new Client($config);
         $service = new Service($client);
 
+        $error = hook_retro($service,$params['publickey'],$params['privatekey'],$params['mode']);
+
+        if(!empty($error)){
+            throw new Exception($error);
+        }
+
         $invoiceid      = $params['invoiceid']."-".md5(sprintf("%s %d", $params['companyname'], $params['invoiceid']));
         $return_url     = $params['returnurl'];
         $description    = $params["description"];
         $amount         = $params['amount'];
-        $currency       = $params['currency'];
 
         $firstname      = $params['clientdetails']['firstname'];
         $lastname       = $params['clientdetails']['lastname'];
         $email          = $params['clientdetails']['email'];
-        $address1       = $params['clientdetails']['address1'];
-        $address2       = $params['clientdetails']['address2'];
-        $city           = $params['clientdetails']['city'];
-        $state          = $params['clientdetails']['state'];
-        $postcode       = $params['clientdetails']['postcode'];
-        $country        = $params['clientdetails']['country'];
-        $phone          = $params['clientdetails']['phonenumber'];
 
-        $final_dir = "$address1 $address2, $city, $state, $country, CP: $postcode";
         $full_name = "$firstname $lastname";
 
-    }catch(\Exception $e){
+        $data = array(
+            ":publickey:"       => $params['publickey'],
+            ":customer_name:"   => $full_name,
+            ":customer_email:"  => $email,
+            ":product_price:"   => $amount,
+            ":product_id:"      => $invoiceid,
+            ":product_name:"    => $description,
+            ":success_url:"     => $return_url,
+            ":failed_url:"      => $return_url
+        );
 
+        $code = Views::loadView('button',null,'path');
+
+        foreach($data as $key => $value){
+            $code = str_replace($key,$value,$config);
+        }
+    }catch(Exception $e){
+        $code = "<div style='width: 100%; padding: 1em; color: #FFFFFF; overflow: hidden; background-color: #33C3F0'>
+                {$e->getMessage()}</div>";
     }
-
-
     return $code;
 }
 

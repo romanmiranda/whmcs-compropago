@@ -1,10 +1,10 @@
 <?php
 
 # Required File Includes
-include("../../../dbconnect.php");
-include("../../../includes/functions.php");
-include("../../../includes/gatewayfunctions.php");
-include("../../../includes/invoicefunctions.php");
+require_once __DIR__ . '/../../../init.php';
+require_once __DIR__ . "/../../../dbconnect.php";
+require_once __DIR__ . '/../../../includes/gatewayfunctions.php';
+require_once __DIR__ . '/../../../includes/invoicefunctions.php';
 
 $gatewaymodule = "compropago"; # Enter your gateway module name here replacing template
 $GATEWAY = getGatewayVariables($gatewaymodule);

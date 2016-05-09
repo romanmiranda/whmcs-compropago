@@ -1,4 +1,4 @@
-<?php
+<!--
 /**
  * Copyright 2015 Compropago.
  *
@@ -18,19 +18,8 @@
  * Compropago php-sdk
  * @author Eduardo Aguilar <eduardo.aguilar@compropago.com>
  */
+-->
 
-extract($compropagoData);
-
-$publickey      = (isset($publickey) && !empty($publickey)) ? $publickey : "";
-$customer_name  = (isset($customer_name) && !empty($customer_name)) ? $customer_name : "";
-$customer_email = (isset($customer_email) && !empty($customer_email)) ? $customer_email : "";
-$product_price  = (isset($product_price) && !empty($product_price)) ? $product_price : "";
-$product_id     = (isset($product_id) && !empty($product_id)) ? $product_id : "";
-$product_name   = (isset($product_name) && !empty($product_name)) ? $product_name : "";
-$success_url    = (isset($success_url) && !empty($success_url)) ? $success_url : "";
-$failed_url     = (isset($failed_url) && !empty($failed_url)) ? $failed_url : "";
-
-?>
 
 <style>
     .cpbutton{
@@ -76,18 +65,18 @@ $failed_url     = (isset($failed_url) && !empty($failed_url)) ? $failed_url : ""
 </style>
 
 <form action="https://www.compropago.com/comprobante/" method="post">
-    <input type="hidden" name="public_key" value="<?php echo $publickey; ?>" />
+    <input type="hidden" name="public_key" value=":publickey:" />
 
     <input type="hidden" name="app_client_name" value="WHMCS" />
     <input type="hidden" name="app_client_version" value="1.1" />
 
     <input type="hidden" name="customer_data_blocked"   value="false" />
-    <input type="hidden" name="customer_name"           value="<?php echo $customer_name; ?>" />
-    <input type="hidden" name="customer_email"          value="<?php echo $customer_email; ?>" />
-    <input type="hidden" name="product_price"           value="<?php echo $product_price; ?>" />
-    <input type="hidden" name="product_id"              value="<?php echo $product_id; ?>" />
-    <input type="hidden" name="product_name"            value="<?php echo $product_name; ?>" />
-    <input type="hidden" name="success_url"             value="<?php echo $success_url; ?>" />
-    <input type="hidden" name="failed_url"              value="<?php echo $failed_url; ?>" />
+    <input type="hidden" name="customer_name"           value=":customer_name:" />
+    <input type="hidden" name="customer_email"          value=":customer_email:" />
+    <input type="hidden" name="product_price"           value=":product_price:" />
+    <input type="hidden" name="product_id"              value=":product_id:" />
+    <input type="hidden" name="product_name"            value=":product_name:" />
+    <input type="hidden" name="success_url"             value=":success_url:" />
+    <input type="hidden" name="failed_url"              value=":failed_url:" />
     <input type="submit" alt="Compropago" class="cpbutton cpbutton-primary" value="Pagar en Efectivo" />
 </form>
