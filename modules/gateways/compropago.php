@@ -19,13 +19,12 @@
  * @author Eduardo Aguilar <eduardo.aguilar@compropago.com>
  */
 
+require_once __DIR__ ."/../../../includes/functions.php";
 
 if (!defined("WHMCS")) {
     die("This file cannot be accessed directly");
 }
 
-use Compropago\Sdk\Client;
-use Compropago\Sdk\Service;
 use Compropago\Sdk\Controllers\Views;
 
 /**
@@ -34,7 +33,7 @@ use Compropago\Sdk\Controllers\Views;
  * @return array
  */
 function compropago_config()
-{;
+{
     return array(
         "FriendlyName" => array(
             "Type"         => "System",
@@ -66,73 +65,61 @@ function compropago_config()
                                <a href='https://www.compropago.com/panel/webhooks'>Webhooks</a>",
             "Default"      => $_SERVER['SERVER_NAME']."/modules/gateways/callback/compropago.php"
         ),
-        "showlogo" => array(
-            "FriendlyName" => "Mostrar Logos",
-            "Type"         => "yesno",
-            "Description"  => "Mostrar los logos de las tiendas o un SelectBox"
-        ),
-        "description" => array(
-            "FriendlyName" => "Descripcion",
-            "Type"         => "text",
-            "Description"  => "Descripcion del servicio",
-            "Default"      => "ComproPago, pagos en Oxxo, 7Eleven, Coppel y mas."
-        ),
-        "instructions" => array(
-            "FriendlyName" => "Instrucciones",
-            "Type"         => "text",
-            "Description"  => "Instrucciones para la seleccion de tienda",
-            "Default"      => "Antes de finalizar seleccione la tienda donde desea realizar su pago"
-        ),
     );
 }
 
 /**
  * Generar retroalimentacion de errores posibles
  *
- * @param Service $service
+ * @param $service
  * @param $publickey
  * @param $privatekey
  * @param $mode
  * @return null|string
  */
-function hook_retro(Service $service, $publickey, $privatekey, $mode)
+function hook_retro($service, $publickey, $privatekey, $mode)
 {
     $error = null;
 
+    $GATEWAY = getGatewayVariables('compropago');
 
-    if(!empty($publickey) && !empty($privatekey)){
-        if($mode=='yes'){
-            $moduleLive=true;
-        }else {
-            $moduleLive=false;
-        }
+    if (!$GATEWAY["type"]) {
+        if (!empty($publickey) && !empty($privatekey)) {
+            if ($mode == 'yes') {
+                $moduleLive = true;
+            } else {
+                $moduleLive = false;
+            }
 
-        try{
-            //eval keys
-            if(!$compropagoResponse = $service->evalAuth()){
-                $error = 'Invalid Keys, The Public Key and Private Key must be valid before using this module.';
-            }else{
-                if($compropagoResponse->mode_key != $compropagoResponse->livemode){
-                    $error = 'Your Keys and Your ComproPago account are set to different Modes.';
-                }else{
-                    if($moduleLive != $compropagoResponse->livemode){
-                        $error = 'Your Store and Your ComproPago account are set to different Modes.';
-                    }else{
-                        if($moduleLive != $compropagoResponse->mode_key){
-                            $error = 'ComproPago ALERT:Your Keys are for a different Mode.';
-                        }else{
-                            if(!$compropagoResponse->mode_key && !$compropagoResponse->livemode){
-                                $error = 'WARNING: ComproPago account is Running in TEST Mode, NO REAL OPERATIONS';
+            try {
+                //eval keys
+                if (!$compropagoResponse = $service->evalAuth()) {
+                    $error = 'Invalid Keys, The Public Key and Private Key must be valid before using this module.';
+                } else {
+                    if ($compropagoResponse->mode_key != $compropagoResponse->livemode) {
+                        $error = 'Your Keys and Your ComproPago account are set to different Modes.';
+                    } else {
+                        if ($moduleLive != $compropagoResponse->livemode) {
+                            $error = 'Your Store and Your ComproPago account are set to different Modes.';
+                        } else {
+                            if ($moduleLive != $compropagoResponse->mode_key) {
+                                $error = 'ComproPago ALERT:Your Keys are for a different Mode.';
+                            } else {
+                                if (!$compropagoResponse->mode_key && !$compropagoResponse->livemode) {
+                                    $error = 'WARNING: ComproPago account is Running in TEST Mode, NO REAL OPERATIONS';
+                                }
                             }
                         }
                     }
                 }
+            } catch (Exception $e) {
+                $error = $e->getMessage();
             }
-        }catch (Exception $e) {
-            $error = $e->getMessage();
+        } else {
+            $error = 'The Public Key and Private Key must be set before using ComproPago';
         }
-    }else{
-        $error = 'The Public Key and Private Key must be set before using ComproPago';
+    } else {
+        $error = "ComproPago no esta activo";
     }
 
     return $error;
@@ -149,21 +136,12 @@ function compropago_link($params)
 {
     $code = null;
 
-    $config = array(
-        "publickey"     => $params['publickey'],
-        "privatekey"    => $params['privatekey'],
-        "live"          => $params['mode']
-    );
-
     try{
-        $client = new Client($config);
-        $service = new Service($client);
-
-        $error = hook_retro($service,$params['publickey'],$params['privatekey'],$params['mode']);
+        /*$error = hook_retro($service,$params['publickey'],$params['privatekey'],$params['mode']);
 
         if(!empty($error)){
             throw new Exception($error);
-        }
+        }*/
 
         $invoiceid      = $params['invoiceid']."-".md5(sprintf("%s %d", $params['companyname'], $params['invoiceid']));
         $return_url     = $params['returnurl'];
@@ -187,10 +165,10 @@ function compropago_link($params)
             ":failed_url:"      => $return_url
         );
 
-        $code = Views::loadView('button',null,'path');
+        $code = file_get_contents(Views::loadView('button',null,'path'));
 
         foreach($data as $key => $value){
-            $code = str_replace($key,$value,$config);
+            $code = str_replace($key,$value,$code);
         }
     }catch(Exception $e){
         $code = "<div style='width: 100%; padding: 1em; color: #FFFFFF; overflow: hidden; background-color: #33C3F0'>

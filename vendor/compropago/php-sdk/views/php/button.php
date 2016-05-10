@@ -68,7 +68,7 @@
     <input type="hidden" name="public_key" value=":publickey:" />
 
     <input type="hidden" name="app_client_name" value="WHMCS" />
-    <input type="hidden" name="app_client_version" value="1.1" />
+    <input type="hidden" name="app_client_version" value="1.0" />
 
     <input type="hidden" name="customer_data_blocked"   value="false" />
     <input type="hidden" name="customer_name"           value=":customer_name:" />
