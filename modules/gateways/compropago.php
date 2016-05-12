@@ -20,6 +20,7 @@
  */
 
 require_once __DIR__ ."/../../../includes/functions.php";
+require_once __DIR__ ."/../vendor/autoload.php";
 
 if (!defined("WHMCS")) {
     die("This file cannot be accessed directly");
