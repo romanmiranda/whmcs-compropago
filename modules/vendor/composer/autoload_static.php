@@ -20,11 +20,27 @@ class ComposerStaticInitfcc0a8b7f67d3598c4abc4892a9e3e8a
         ),
     );
 
+    public static $classMap = array (
+        'Compropago\\Sdk\\Client' => __DIR__ . '/..' . '/compropago/php-sdk/src/Compropago/Client.php',
+        'Compropago\\Sdk\\Controllers\\Views' => __DIR__ . '/..' . '/compropago/php-sdk/src/Compropago/Controllers/Views.php',
+        'Compropago\\Sdk\\Exception' => __DIR__ . '/..' . '/compropago/php-sdk/src/Compropago/Exception.php',
+        'Compropago\\Sdk\\Exceptions\\BaseException' => __DIR__ . '/..' . '/compropago/php-sdk/src/Compropago/Exceptions/BaseException.php',
+        'Compropago\\Sdk\\Exceptions\\HttpException' => __DIR__ . '/..' . '/compropago/php-sdk/src/Compropago/Exceptions/HttpException.php',
+        'Compropago\\Sdk\\Http\\Curl' => __DIR__ . '/..' . '/compropago/php-sdk/src/Compropago/Http/Curl.php',
+        'Compropago\\Sdk\\Http\\Request' => __DIR__ . '/..' . '/compropago/php-sdk/src/Compropago/Http/Request.php',
+        'Compropago\\Sdk\\Http\\Rest' => __DIR__ . '/..' . '/compropago/php-sdk/src/Compropago/Http/Rest.php',
+        'Compropago\\Sdk\\Models\\DataBase' => __DIR__ . '/..' . '/compropago/php-sdk/src/Compropago/Models/DataBase.php',
+        'Compropago\\Sdk\\Service' => __DIR__ . '/..' . '/compropago/php-sdk/src/Compropago/Service.php',
+        'Compropago\\Sdk\\Utils\\Store' => __DIR__ . '/..' . '/compropago/php-sdk/src/Compropago/Utils/Store.php',
+        'Compropago\\Sdk\\Utils\\Utils' => __DIR__ . '/..' . '/compropago/php-sdk/src/Compropago/Utils/Utils.php',
+    );
+
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
             $loader->prefixLengthsPsr4 = ComposerStaticInitfcc0a8b7f67d3598c4abc4892a9e3e8a::$prefixLengthsPsr4;
             $loader->prefixDirsPsr4 = ComposerStaticInitfcc0a8b7f67d3598c4abc4892a9e3e8a::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInitfcc0a8b7f67d3598c4abc4892a9e3e8a::$classMap;
 
         }, null, ClassLoader::class);
     }

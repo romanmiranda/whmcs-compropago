@@ -19,7 +19,7 @@
  * @author Eduardo Aguilar <eduardo.aguilar@compropago.com>
  */
 
-require_once __DIR__ ."/../../../includes/functions.php";
+require_once __DIR__ ."/../../includes/functions.php";
 require_once __DIR__ ."/../vendor/autoload.php";
 
 if (!defined("WHMCS")) {
@@ -35,20 +35,44 @@ use Compropago\Sdk\Controllers\Views;
  */
 function compropago_config()
 {
+    $uri = explode("/",$_SERVER["REQUEST_URI"]);
+    $aux = "";
+    foreach($uri as $value){
+        if($value == 'admin'){
+            break;
+        }else{
+            $aux .= $value."/";
+        }
+    }
+
     return array(
         "FriendlyName" => array(
             "Type"         => "System",
             "Value"        =>"ComproPago (Oxxo, 7Eleven, Coppel, etc.)"
         ),
-        "publickey" => array(
-            "FriendlyName" => "Public Key",
+        "publickey_live" => array(
+            "FriendlyName" => "Public Key - Live",
             "Type"         => "text",
             "Size"         => "30",
             "Description"  => "Esta llave esta disponible en <a href='https://www.compropago.com/panel/configuracion'>
                                https://www.compropago.com/panel/configuracion</a>.",
         ),
-        "privatekey" => array(
-            "FriendlyName" => "Private Key",
+        "privatekey_live" => array(
+            "FriendlyName" => "Private Key - Live",
+            "Type"         => "text",
+            "Size"         => "30",
+            "Description"  => "Esta llave esta disponible en <a href='https://www.compropago.com/panel/configuracion'>
+                               https://www.compropago.com/panel/configuracion</a>.",
+        ),
+        "publickey_test" => array(
+            "FriendlyName" => "Public Key - Test",
+            "Type"         => "text",
+            "Size"         => "30",
+            "Description"  => "Esta llave esta disponible en <a href='https://www.compropago.com/panel/configuracion'>
+                               https://www.compropago.com/panel/configuracion</a>.",
+        ),
+        "privatekey_test" => array(
+            "FriendlyName" => "Private Key - Test",
             "Type"         => "text",
             "Size"         => "30",
             "Description"  => "Esta llave esta disponible en <a href='https://www.compropago.com/panel/configuracion'>
@@ -56,15 +80,17 @@ function compropago_config()
         ),
         "mode" => array(
             "FriendlyName" => "Active Mode",
-            "Type"         => "yesno",
-            "Description"  => "Seleccione si esta en modo activo o modo de pruebas."
+            "Type" => "radio",
+            "Options" => "Live,Test",
+            "Description" => "Seleccione si esta en modo activo o modo de pruebas.",
+            "default" => "Live"
         ),
         "webhook" => array(
             "FriendlyName" => "Webhook",
             "Type"         => "textarea",
             "Descripcion"  => "Copie esta direccion y agreguela en el panel de compropago en la seccion
                                <a href='https://www.compropago.com/panel/webhooks'>Webhooks</a>",
-            "Default"      => $_SERVER['SERVER_NAME']."/modules/gateways/callback/compropago.php"
+            "Default"      => $_SERVER['SERVER_NAME'].$aux."modules/gateways/callback/compropago.php"
         ),
     );
 }
@@ -135,46 +161,35 @@ function hook_retro($service, $publickey, $privatekey, $mode)
  */
 function compropago_link($params)
 {
-    $code = null;
+    $aux = null;
 
-    try{
-        /*$error = hook_retro($service,$params['publickey'],$params['privatekey'],$params['mode']);
+    $file = explode("/",$_SERVER["REQUEST_URI"]);
+    $file = $file[sizeof($file) - 1];
 
-        if(!empty($error)){
-            throw new Exception($error);
-        }*/
+    $publickey = ($params['mode'] == "Live") ? $params['publickey_live'] : $params['publickey_test'];
+    $privatekey = ($params['mode'] == "Live") ? $params['privatekey_live'] : $params['privatekey_test'];
 
-        $invoiceid      = $params['invoiceid']."-".md5(sprintf("%s %d", $params['companyname'], $params['invoiceid']));
-        $return_url     = $params['returnurl'];
-        $description    = $params["description"];
-        $amount         = $params['amount'];
-
-        $firstname      = $params['clientdetails']['firstname'];
-        $lastname       = $params['clientdetails']['lastname'];
-        $email          = $params['clientdetails']['email'];
-
-        $full_name = "$firstname $lastname";
-
+    if(preg_match('/viewinvoice.php/',$file)){
         $data = array(
-            ":publickey:"       => $params['publickey'],
-            ":customer_name:"   => $full_name,
-            ":customer_email:"  => $email,
-            ":product_price:"   => $amount,
-            ":product_id:"      => $invoiceid,
-            ":product_name:"    => $description,
-            ":success_url:"     => $return_url,
-            ":failed_url:"      => $return_url
+            ":publickey:"       => $publickey,
+            ":customer_name:"   => $params['clientdetails']['firstname']." ".$params['clientdetails']['lastname'],
+            ":customer_email:"  => $params['clientdetails']['email'],
+            ":product_price:"   => $params['amount'],
+            ":product_id:"      => $params['invoiceid'],
+            ":product_name:"    => md5($params['invoiceid'] . $_SERVER['SERVER_NAME'] . $params['amount'] . $publickey . $privatekey),
+            ":success_url:"     => $params['returnurl'],
+            ":failed_url:"      => $params['returnurl'],
         );
 
-        $code = file_get_contents(Views::loadView('button',null,'path'));
+        $aux = file_get_contents(Views::loadView('button',null,'path'));
 
         foreach($data as $key => $value){
-            $code = str_replace($key,$value,$code);
+            $aux = str_replace($key,$value,$aux);
         }
-    }catch(Exception $e){
-        $code = "<div style='width: 100%; padding: 1em; color: #FFFFFF; overflow: hidden; background-color: #33C3F0'>
-                {$e->getMessage()}</div>";
+    }else{
+        $aux = '<img src="https://media.licdn.com/media/p/5/005/02d/277/3e9dd1a.png">';
     }
-    return $code;
+
+    return $aux;
 }
 
