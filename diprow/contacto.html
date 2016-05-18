@@ -1,0 +1,183 @@
+<!doctype html>
+<html class="no-js" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Contacto</title>
+
+    <link rel="stylesheet" href="css/foundation.min.css" />
+    <link rel="stylesheet" href="css/master.css">
+    <link rel="stylesheet" href="css/contacto.css">
+
+    <script src="js/vendor/modernizr.js"></script>
+</head>
+
+<body>
+    <div class="fixed">
+        <nav class="top-bar" data-topbar role="navigation">
+            <ul class="title-area">
+                <li class="name">
+                    <h1><a href="inicio"><img src="designes/Logo_DIPROW-WEB-BLANCO.svg" alt="DIPROW" style="height: 2em; width: auto;"></a></h1>
+                </li>
+                <!-- Remove the class "menu-icon" to get rid of menu icon. Take out "Menu" to just have icon alone -->
+                <li class="toggle-topbar menu-icon"><a href="#"><span>Menu</span></a></li>
+            </ul>
+
+            <section class="top-bar-section">
+                <!-- Left Nav Section -->
+                <ul class="left">
+                    <li><a href="inicio">Inicio</a></li>
+                    <li><a href="quienessomos">¿Quiénes somos?</a></li>
+                    <li><a href="porquenosotros">¿Por qué nosotros?</a></li>
+                    <li><a href="servicios">Servicios</a></li>
+                    <li><a href="contacto">Contacto</a></li>
+                </ul>
+            </section>
+        </nav>
+    </div>
+
+    <main>
+        <header>
+            <div class="row">
+                <div class="large-12 columns">
+                    <h1>Contactanos</h1>
+                </div>
+            </div>
+        </header>
+        
+        <div class="row">
+            <div class="large-12 columns">
+
+                <div id="contact-alert" data-alert class="alert-box success" style="display: none;">
+                    <div id="message-alert"></div>
+                    <a href="#" class="close">&times;</a>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="large-5 columns">
+                <div class="row">
+                    <div class="large-12 columns">
+                        <h4>Información</h4>
+                        <hr>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="large-12 columns">
+                        <div class="row">
+                            <div class="large-4 columns"><b>Contacto</b></div>
+                            <div class="large-8 columns">Eduardo Aguilar Yépez</div>
+                        </div>
+                        <div class="row">
+                            <div class="large-4 columns"><b>Correo</b></div>
+                            <div class="large-8 columns">eduardoay@outlook.com</div>
+                        </div>
+                        <div class="row">
+                            <div class="large-4 columns"><b>Teléfono</b></div>
+                            <div class="large-8 columns">(044) 55 7085 2233</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="large-12 columns">
+                        <hr>
+                        <div class="row">
+                            <div class="large-4 columns"><b>Contacto</b></div>
+                            <div class="large-8 columns">Aaron Gabriel Hinojosa Maya</div>
+                        </div>
+                        <div class="row">
+                            <div class="large-4 columns"><b>Correo</b></div>
+                            <div class="large-8 columns">aaron.hmaya@gmail.com</div>
+                        </div>
+                        <div class="row">
+                            <div class="large-4 columns"><b>Teléfono</b></div>
+                            <div class="large-8 columns">(044) 55 31371278</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="large-12 columns">
+                        <hr>
+                        <div class="row">
+                            <div class="large-4 columns"><b>Contacto</b></div>
+                            <div class="large-8 columns">Jóse Luís Esteban Rodiguez Gonzales</div>
+                        </div>
+                        <div class="row">
+                            <div class="large-4 columns"><b>Correo</b></div>
+                            <div class="large-8 columns"></div>
+                        </div>
+                        <div class="row">
+                            <div class="large-4 columns"><b>Teléfono</b></div>
+                            <div class="large-8 columns">(044) 55 62484749</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="large-7 columns">
+                <form action="sendmesage" method="post" name="contactForm">
+                    <div class="row">
+                        <div class="large-12 columns">
+                            <label for="name">Nombre</label>
+                            <input type="text" name="name" id="name">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="large-12 columns">
+                            <label for="asunto">Asunto</label>
+                            <input type="text" name="asunto" id="asunto">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="large-12 columns">
+                            <label for="correo">Correo</label>
+                            <input type="email" name="correo" id="correo">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="large-12 columns">
+                            <label for="telefono">Telefono</label>
+                            <input type="tel" name="telefono" id="telefono">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="large-12 columns">
+                            <label for="mensaje">Mensaje</label>
+                            <textarea name="mensaje" id="mensaje" rows="10"></textarea>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="large-12 columns">
+                            <input id="enviar" type="button" value="Enviar" class="button tiny expand">
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </main>
+
+    <div id="myModal" class="reveal-modal" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
+        <h2 id="modalTitle">Error !!</h2>
+        <p id="error-text"></p>
+        <a class="close-reveal-modal" aria-label="Close">&#215;</a>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <script src="js/foundation/foundation.js"></script>
+    <script src="js/foundation/foundation.reveal.js"></script>
+    <script src="js/foundation/foundation.alert.js"></script>
+
+    <script src="js/actionsContacto.js"></script>
+
+    <script>
+        $(document).foundation();
+    </script>
+</body>
+
+</html>

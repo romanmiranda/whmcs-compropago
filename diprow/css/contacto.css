@@ -1,0 +1,11 @@
+html,body{
+    background-image: url(../img/contacto.jpg);
+}
+
+label{
+    color: #FFF !important;
+}
+
+#myModal, #modalTitle{
+    color: #000 !important;
+}

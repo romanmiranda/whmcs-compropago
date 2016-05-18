@@ -1,0 +1,20 @@
+
+Options -Indexes
+
+RewriteEngine On
+
+RewriteBase /
+
+RewriteRule ^inicio$ index.html [L]
+RewriteRule ^quienessomos$ quienes.html [L]
+RewriteRule ^porquenosotros$ nosotros.html [L]
+RewriteRule ^servicios$ servicios.html [L]
+RewriteRule ^contacto$ contacto.html [L]
+RewriteRule ^demos/(.+)$ demos/$1 [L]
+
+<FilesMatch "\.!(html)$">
+	Header set X-Robots-Tag "none,nosnippet,noarchive"
+</FilesMatch>
+<FilesMatch ".html$">
+	Header set X-Robots-Tag "nofollow,noarchive"
+</FilesMatch>

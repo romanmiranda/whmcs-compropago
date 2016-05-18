@@ -34,6 +34,7 @@ if (!$gatewayParams['type']) {
 
 
 $request = @file_get_contents('php://input');
+$evt_json = json_decode($request,true);
 if(!$jsonObj = json_decode($request)){
     die('Tipo de Request no Valido');
 }
@@ -104,8 +105,6 @@ try{
         default:
             die('Invalid Response type');
     }
-
-
 }catch (Exception $e) {
     //something went wrong at sdk lvl
     die($e->getMessage());
@@ -113,12 +112,13 @@ try{
 
 
 $success = true;
+
+$transId            = $jsonObj->id;
 $invoiceId 			= $jsonObj->order_info->order_id;
 $paymentAmount 		= $jsonObj->order_info->order_price;
 $paymentFee 		= $jsonObj->fee;
 $hash 				= $jsonObj->order_info->order_name;
 $transactionStatus 	= $nomestatus;
-$transactionId      = $_POST['x_trans_id'];
 
 
 
@@ -134,6 +134,8 @@ if ($hash != md5($invoiceId . $_SERVER['SERVER_NAME'] . $paymentAmount . $public
     $success = false;
 }
 
+
+
 /**
  * Validate Callback Invoice ID.
  *
@@ -145,20 +147,25 @@ if ($hash != md5($invoiceId . $_SERVER['SERVER_NAME'] . $paymentAmount . $public
  * Returns a normalised invoice ID.
  */
 $invoiceId = checkCbInvoiceID($invoiceId, $gatewayParams['name']);
-
+checkCbTransID($transId);
 
 /**
  * Accept the order transaction
  */
 if ($success) {
 
-    $command = $nomestatus;
+    /*$command = $nomestatus;
     $adminuser = "admin";
     $values['orderid'] = $invoiceId;
 
-    $response = localAPI($command,$values,$adminuser);
+    $response = @localAPI($command,$values,$adminuser);
 
     if($response != 'success'){
         die($response);
-    }
+    }*/
+
+    addInvoicePayment($invoiceId,$transId,$paymentAmount,$paymentFee,$gatewayModuleName);
+    logTransaction($gatewayParams["name"],$evt_json,"Successful");
+}else{
+    logTransaction($gatewayParams["name"],$evt_json,"Unsuccessful");
 }
