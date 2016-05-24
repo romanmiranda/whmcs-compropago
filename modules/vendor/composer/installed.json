@@ -1,45 +1,49 @@
 [
     {
-        "name": "compropago/php-sdk",
-        "version": "1.1.1",
-        "version_normalized": "1.1.1.0",
+        "name": "compropago/views-sdk",
+        "version": "dev-1.0.0-alfa",
+        "version_normalized": "dev-1.0.0-alfa",
         "source": {
             "type": "git",
-            "url": "https://github.com/compropago/compropago-php.git",
-            "reference": "91f91fa590587f446451ec41b7d92afb6c6dc849"
+            "url": "https://github.com/danteay/compropago-views-sdk.git",
+            "reference": "56b186cabb23c34ba300e8b4304dbc6380dbe0d4"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/compropago/compropago-php/zipball/91f91fa590587f446451ec41b7d92afb6c6dc849",
-            "reference": "91f91fa590587f446451ec41b7d92afb6c6dc849",
+            "url": "https://api.github.com/repos/danteay/compropago-views-sdk/zipball/56b186cabb23c34ba300e8b4304dbc6380dbe0d4",
+            "reference": "56b186cabb23c34ba300e8b4304dbc6380dbe0d4",
             "shasum": ""
         },
         "require": {
             "php": ">=5.5"
         },
-        "time": "2016-04-21 17:10:18",
+        "suggest": {
+            "compropago/php-sdk": ">=1.1"
+        },
+        "time": "2016-05-23 16:56:46",
         "type": "library",
-        "installation-source": "dist",
+        "installation-source": "source",
         "autoload": {
             "psr-4": {
-                "Compropago\\Sdk\\": "src/"
+                "CompropagoViews\\": "Views"
             }
         },
         "notification-url": "https://packagist.org/downloads/",
         "license": [
-            "Apache-2.0"
+            "Apahce-2.0"
         ],
         "authors": [
             {
-                "name": "Rolando Lucio",
-                "email": "rolando@compropago.com"
+                "name": "Arthur",
+                "email": "dante.aguilar41@gmail.com"
             }
         ],
-        "description": "PHP SDK for Compropago API",
-        "homepage": "https://compropago.com/documentacion/librerias",
+        "homepage": "https://github.com/danteay/compropago-views-sdk",
         "keywords": [
-            "pagos internet",
-            "payment gateway"
+            "compropago",
+            "php",
+            "smarty",
+            "views"
         ]
     }
 ]

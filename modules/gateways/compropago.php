@@ -26,7 +26,7 @@ if (!defined("WHMCS")) {
     die("This file cannot be accessed directly");
 }
 
-use Compropago\Sdk\Controllers\Views;
+use CompropagoViews\ChargeView;
 
 /**
  * Funcion que despluega los campos de configuracion para el modulo de ComproPago
@@ -78,6 +78,18 @@ function compropago_config()
             "Description"  => "Esta llave esta disponible en <a href='https://www.compropago.com/panel/configuracion'>
                                https://www.compropago.com/panel/configuracion</a>.",
         ),
+        "admin_user" => array(
+            "FriendlyName" => "Admin User",
+            "Type"         => "text",
+            "Size"         => "30",
+            "Description"  => "Usuario administrador del panel WHMCS, necesario para manejo de API interna",
+        ),
+        "admin_pass" => array(
+            "FriendlyName" => "Admin Password",
+            "Type"         => "password",
+            "Size"         => "30",
+            "Description"  => "Password de administrador del panel WHMCS, necesario para manejo de API interna",
+        ),
         "mode" => array(
             "FriendlyName" => "Active Mode",
             "Type" => "radio",
@@ -95,63 +107,6 @@ function compropago_config()
     );
 }
 
-/**
- * Generar retroalimentacion de errores posibles
- *
- * @param $service
- * @param $publickey
- * @param $privatekey
- * @param $mode
- * @return null|string
- */
-function hook_retro($service, $publickey, $privatekey, $mode)
-{
-    $error = null;
-
-    $GATEWAY = getGatewayVariables('compropago');
-
-    if (!$GATEWAY["type"]) {
-        if (!empty($publickey) && !empty($privatekey)) {
-            if ($mode == 'yes') {
-                $moduleLive = true;
-            } else {
-                $moduleLive = false;
-            }
-
-            try {
-                //eval keys
-                if (!$compropagoResponse = $service->evalAuth()) {
-                    $error = 'Invalid Keys, The Public Key and Private Key must be valid before using this module.';
-                } else {
-                    if ($compropagoResponse->mode_key != $compropagoResponse->livemode) {
-                        $error = 'Your Keys and Your ComproPago account are set to different Modes.';
-                    } else {
-                        if ($moduleLive != $compropagoResponse->livemode) {
-                            $error = 'Your Store and Your ComproPago account are set to different Modes.';
-                        } else {
-                            if ($moduleLive != $compropagoResponse->mode_key) {
-                                $error = 'ComproPago ALERT:Your Keys are for a different Mode.';
-                            } else {
-                                if (!$compropagoResponse->mode_key && !$compropagoResponse->livemode) {
-                                    $error = 'WARNING: ComproPago account is Running in TEST Mode, NO REAL OPERATIONS';
-                                }
-                            }
-                        }
-                    }
-                }
-            } catch (Exception $e) {
-                $error = $e->getMessage();
-            }
-        } else {
-            $error = 'The Public Key and Private Key must be set before using ComproPago';
-        }
-    } else {
-        $error = "ComproPago no esta activo";
-    }
-
-    return $error;
-
-}
 
 /**
  * Ejecucion del proceso de pago
@@ -171,21 +126,20 @@ function compropago_link($params)
 
     if(preg_match('/viewinvoice.php/',$file)){
         $data = array(
-            ":publickey:"       => $publickey,
-            ":customer_name:"   => $params['clientdetails']['firstname']." ".$params['clientdetails']['lastname'],
-            ":customer_email:"  => $params['clientdetails']['email'],
-            ":product_price:"   => $params['amount'],
-            ":product_id:"      => $params['invoiceid'],
-            ":product_name:"    => md5($params['invoiceid'] . $_SERVER['SERVER_NAME'] . $params['amount'] . $publickey . $privatekey),
-            ":success_url:"     => $params['returnurl'],
-            ":failed_url:"      => $params['returnurl'],
+            "{{publickey}}"       => $publickey,
+            "{{client_name}}"     => "WHMCS",
+            "{{version}}"         => "1.1",
+            "{{customer_name}}"   => $params['clientdetails']['firstname']." ".$params['clientdetails']['lastname'],
+            "{{customer_email}}"  => $params['clientdetails']['email'],
+            "{{order_price}}"     => $params['amount'],
+            "{{order_id}}"        => $params['invoiceid'],
+            "{{order_name}}"      => md5($params['invoiceid'] . $_SERVER['SERVER_NAME'] . $params['amount'] . $publickey . $privatekey),
+            "{{success_url}}"     => $params['returnurl'],
+            "{{failure_url}}"     => $params['returnurl'],
         );
 
-        $aux = file_get_contents(Views::loadView('button',null,'path'));
-
-        foreach($data as $key => $value){
-            $aux = str_replace($key,$value,$aux);
-        }
+        $aux = "<style>".ChargeView::getSourceStyle()."</style>";
+        $aux .= ChargeView::getView('button', $data, 'source', 'html');
     }else{
         $aux = '<img src="https://media.licdn.com/media/p/5/005/02d/277/3e9dd1a.png">';
     }

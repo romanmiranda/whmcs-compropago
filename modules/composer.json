@@ -1,5 +1,5 @@
 {
     "require": {
-        "compropago/php-sdk": "^1.1"
+        "compropago/views-sdk": "dev-1.0.0-alfa"
     }
 }
