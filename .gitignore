@@ -1,3 +1,5 @@
 # Created by .ignore support plugin (hsz.mobi)
 .idea
-diprow
+.git
+.gitignore
+vendor/compropago/views-sdk/.git
