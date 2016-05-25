@@ -57,8 +57,8 @@ if($hash != $jsonObj->order_info->order_name){
 }
 
 
-//$invoiceId = checkCbInvoiceID($invoiceId,$gatewayModuleName);
-//checkCbTransID($jsonObj->id);
+$invoiceId = checkCbInvoiceID($invoiceId,$gatewayModuleName);
+checkCbTransID($jsonObj->id);
 
 
 if($jsonObj->type == 'charge.success'){
