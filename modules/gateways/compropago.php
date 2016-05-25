@@ -84,12 +84,6 @@ function compropago_config()
             "Size"         => "30",
             "Description"  => "Usuario administrador del panel WHMCS, necesario para manejo de API interna",
         ),
-        "admin_pass" => array(
-            "FriendlyName" => "Admin Password",
-            "Type"         => "password",
-            "Size"         => "30",
-            "Description"  => "Password de administrador del panel WHMCS, necesario para manejo de API interna",
-        ),
         "mode" => array(
             "FriendlyName" => "Active Mode",
             "Type" => "radio",
@@ -124,6 +118,8 @@ function compropago_link($params)
     $publickey = ($params['mode'] == "Live") ? $params['publickey_live'] : $params['publickey_test'];
     $privatekey = ($params['mode'] == "Live") ? $params['privatekey_live'] : $params['privatekey_test'];
 
+    $hash = md5($params['invoiceid'] . $params['systemurl'] . $publickey);
+
     if(preg_match('/viewinvoice.php/',$file)){
         $data = array(
             "{{publickey}}"       => $publickey,
@@ -133,7 +129,7 @@ function compropago_link($params)
             "{{customer_email}}"  => $params['clientdetails']['email'],
             "{{order_price}}"     => $params['amount'],
             "{{order_id}}"        => $params['invoiceid'],
-            "{{order_name}}"      => md5($params['invoiceid'] . $_SERVER['SERVER_NAME'] . $params['amount'] . $publickey . $privatekey),
+            "{{order_name}}"      => $hash,
             "{{success_url}}"     => $params['returnurl'],
             "{{failure_url}}"     => $params['returnurl'],
         );
@@ -141,7 +137,7 @@ function compropago_link($params)
         $aux = "<style>".ChargeView::getSourceStyle()."</style>";
         $aux .= ChargeView::getView('button', $data, 'source', 'html');
     }else{
-        $aux = '<img src="https://media.licdn.com/media/p/5/005/02d/277/3e9dd1a.png">';
+        $aux = '<img src="https://media.licdn.com/media/p/5/005/02d/277/3e9dd1a.png"><br>';
     }
 
     return $aux;

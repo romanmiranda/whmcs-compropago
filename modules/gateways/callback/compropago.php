@@ -34,3 +34,44 @@ $jsonObj = json_decode($request);
 if(!$jsonObj = json_decode($request)){
     die('Tipo de Request no Valido');
 }
+
+
+if($jsonObj->id=="ch_00000-000-0000-000000" || $jsonObj->short_id =="000000"){
+    die("Probando el WebHook?, <b>Ruta correcta.</b>");
+}
+
+$invoiceId = $jsonObj->order_info->order_id;
+$systemUrl = $gatewayParams['systemurl'];
+$amount    = $jsonObj->order_info->order_price;
+$orderFee  = $jsonObj->fee;
+
+$admin     = $gatewayParams['admin_user'];
+
+$publickey = ($gatewayParams['mode'] == "Live") ? $gatewayParams['publickey_live'] : $gatewayParams['publickey_test'];
+$privatekey= ($gatewayParams['mode'] == "Live") ? $gatewayParams['privatekey_live'] : $gatewayParams['privatekey_test'];
+
+$hash = md5($invoiceId . $systemUrl . $publickey);
+
+if($hash != $jsonObj->order_info->order_name){
+    die('Hash Verification Failure');
+}
+
+
+//$invoiceId = checkCbInvoiceID($invoiceId,$gatewayModuleName);
+//checkCbTransID($jsonObj->id);
+
+
+if($jsonObj->type == 'charge.success'){
+    $action              = 'acceptorder';
+    $values['orderid']   = $invoiceId;
+    $values['sendemail'] = false;
+    $values["autosetup"] = true;
+
+    $response = localAPI($action, $values, $admin);
+
+    if($response['result'] == 'error'){
+        die($response['message']);
+    }
+
+    addInvoicePayment($invoiceId,$jsonObj->id,$amount,$orderFee,$gatewayModuleName);
+}
